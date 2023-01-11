@@ -19,12 +19,13 @@ type Config struct {
 }
 
 type MqttConfig struct {
-	Enabled   bool   `json:"enabled"`
-	Server    string `json:"server"`
-	Port      string `json:"port"`
-	Username  string `json:"username"`
-	Password  string `json:"password"`
-	TopicRoot string `json:"topicRoot"`
+	Enabled      bool   `json:"enabled"`
+	Server       string `json:"server"`
+	Port         string `json:"port"`
+	Username     string `json:"username"`
+	Password     string `json:"password"`
+	TopicRoot    string `json:"topicRoot"`
+	RetainStatus bool   `json:"retainStatus"`
 }
 
 type WebhooksConfig struct {
@@ -68,8 +69,8 @@ type FtpConfig struct {
 func (c *Config) SetDefaults() {
 	viper.SetConfigName("config")
 	viper.SetConfigType("yaml")
-	viper.AddConfigPath(".")
 	viper.AddConfigPath("./config/")
+	viper.AddConfigPath(".")
 
 	viper.SetDefault("debug", false)
 	viper.SetDefault("mqtt.port", 1883)

@@ -53,6 +53,9 @@ mqtt:
   port: 1883
   server: "mqtt.example.com"
   topicroot: camera-alerts
+  # THE FOLLOWING SETTING IS OPTIONAL. Retain the service status messages.
+  # Useful for the consumers to be updated on the service status (live or dead) between restarts.
+  retainStatus: false
 
 webhooks:
   enabled: true

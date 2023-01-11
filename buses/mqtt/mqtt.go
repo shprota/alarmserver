@@ -27,11 +27,11 @@ func (mqtt *Bus) Initialize(config config.MqttConfig) {
 	mqttOpts.SetClientID("alarmserver-go-" + strconv.Itoa(rand.Intn(100)))
 	mqttOpts.SetKeepAlive(2 * time.Second)
 	mqttOpts.SetPingTimeout(1 * time.Second)
-	mqttOpts.SetWill(config.TopicRoot+"/alarmserver", `{ "status": "down" }`, 0, false)
+	mqttOpts.SetWill(config.TopicRoot+"/alarmserver", `{ "status": "down" }`, 0, true)
 
 	mqttOpts.OnConnect = func(client MQTT.Client) {
 		fmt.Printf("MQTT: CONNECTED TO %s\n", config.Server)
-		mqtt.SendMessage(config.TopicRoot+"/alarmserver", `{ "status": "up" }`)
+		mqtt.SendMessage(config.TopicRoot+"/alarmserver", `{ "status": "up" }`, true)
 	}
 
 	mqttOpts.SetConnectionLostHandler(func(client MQTT.Client, err error) {
@@ -53,12 +53,12 @@ func (mqtt *Bus) Initialize(config config.MqttConfig) {
 	}
 }
 
-func (mqtt *Bus) SendMessage(topic string, payload interface{}) {
+func (mqtt *Bus) SendMessage(topic string, payload interface{}, retained bool) {
 	if !mqtt.client.IsConnected() {
 		fmt.Println("MQTT: CLIENT NOT CONNECTED")
 		return
 	}
-	if token := mqtt.client.Publish(topic, 0, false, payload); token.Wait() && token.Error() != nil {
+	if token := mqtt.client.Publish(topic, 0, retained, payload); token.Wait() && token.Error() != nil {
 		fmt.Printf("MQTT ERROR, %s\n", token.Error())
 	}
 	if mqtt.Debug {
